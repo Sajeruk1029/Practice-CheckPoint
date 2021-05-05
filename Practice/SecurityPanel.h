@@ -12,6 +12,7 @@
 #include <QtSql/QSql>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 
 #include <QSerialPort>
 
@@ -44,6 +45,8 @@ class SecurityPanel : public QWidget
 		QLabel *labeluid;
 		QLabel *labelname;
 		QLabel *labeltype;
+		QLabel *labelcourse;
+		QLabel *labelgroup;
 
 		QSqlDatabase *db;
 		QSqlQuery *query;
@@ -51,13 +54,14 @@ class SecurityPanel : public QWidget
 		QSerialPort *port;
 
 		QSettings *settings;
-		
+
 		QTimer *timer;
 
 		QString uid;
 		QString name;
 		QString type;
 		QString msg;
+		QString accesslevel;
 
 };
 

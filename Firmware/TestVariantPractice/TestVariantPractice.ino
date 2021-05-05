@@ -114,6 +114,8 @@ void loop()
   {
     memset(buff, 0, 30);
     
+		printUid();
+
     Serial.setTimeout(20000L);
 
     Serial.println("Enter the name: ");

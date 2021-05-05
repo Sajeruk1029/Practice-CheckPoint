@@ -15,6 +15,7 @@
 #include "AdminPanel.h"
 #include "MasterPanel.h"
 #include "SecurityPanel.h"
+#include "Filials.h"
 
 class ComboPanel : public QWidget
 {
@@ -32,6 +33,8 @@ class ComboPanel : public QWidget
 		AdminPanel *adminPanel;
 		MasterPanel *masterPanel;
 		SecurityPanel *securityPanel;
+
+		Filials *filials;
 };
 
 #endif

@@ -1,8 +1,8 @@
 #include "AdminPanel.h"
 
 AdminPanel::AdminPanel(QSettings *conf) : layout(new QBoxLayout(QBoxLayout::Down)), linehost(new QLineEdit()), linelogin(new QLineEdit()),
-linepassword(new QLineEdit()), linecontrollername(new QLineEdit()), butwriteconf(new QPushButton("Записать")),
-settings(conf)
+linepassword(new QLineEdit()), lineaccess(new QLineEdit()), ports(new QComboBox()),
+butwriteconf(new QPushButton("Записать")), butportrefresh(new QPushButton("Обновить список портов")), settings(conf), db(nullptr)
 {
 	//setWindowTitle("Панель администратора");
 	setLayout(layout);
@@ -11,17 +11,22 @@ settings(conf)
 	linehost->setPlaceholderText("Хост");
 	linelogin->setPlaceholderText("Логин");
 	linepassword->setPlaceholderText("Пароль");
-	linecontrollername->setPlaceholderText("Имя контроллера");
+	lineaccess->setPlaceholderText("Адрес");
 
 	linepassword->setEchoMode(QLineEdit::EchoMode::Password);
+
+	butwriteconf->setEnabled(false);
 
 	layout->addWidget(linehost);
 	layout->addWidget(linelogin);
 	layout->addWidget(linepassword);
-	layout->addWidget(linecontrollername);
+	layout->addWidget(lineaccess);
+	layout->addWidget(ports);
+	layout->addWidget(butportrefresh);
 	layout->addWidget(butwriteconf);
 
 	QObject::connect(butwriteconf, SIGNAL(clicked()), this, SLOT(writeConf()));
+	QObject::connect(butportrefresh, SIGNAL(clicked()), this, SLOT(portrefresh()));
 }
 
 AdminPanel::~AdminPanel()
@@ -31,9 +36,10 @@ AdminPanel::~AdminPanel()
 	delete linehost;
 	delete linelogin;
 	delete linepassword;
-	delete linecontrollername;
+	delete ports;
 
 	delete butwriteconf;
+	delete butportrefresh;
 
 	delete layout;
 }
@@ -57,9 +63,15 @@ void AdminPanel::writeConf()
 
 		settings->endGroup();
 
-		settings->beginGroup("Controller");
+		settings->beginGroup("CONTROLLER");
 
-		settings->setValue("NAME", linecontrollername->text());
+		settings->setValue("NAME", ports->currentText());
+
+		settings->endGroup();
+
+		settings->beginGroup("ACCESS");
+
+		settings->setValue("ACCESSLEVEL", lineaccess->text());
 
 		settings->endGroup();
 
@@ -75,4 +87,25 @@ void AdminPanel::writeConf()
 	}
 
 	QSqlDatabase::removeDatabase("conn");
+}
+
+void AdminPanel::portrefresh()
+{
+	ports->clear();
+
+	for(unsigned char counter = 0; counter < QSerialPortInfo::availablePorts().count(); ++counter)
+	{
+		ports->addItem(QSerialPortInfo::availablePorts()[counter].portName());
+	}
+
+	if(QSerialPortInfo::availablePorts().count() != 0)
+	{
+		ports->setCurrentIndex(0);
+		butwriteconf->setEnabled(true);
+	}
+	else
+	{
+		ports->addItem("Ничего");
+		butwriteconf->setEnabled(false);
+	}
 }

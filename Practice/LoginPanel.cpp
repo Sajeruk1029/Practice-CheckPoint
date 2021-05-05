@@ -22,7 +22,7 @@ butlogin(new QPushButton("Войти")), db(new QSqlDatabase()), query(nullptr),
 
 		settings->endGroup();
 
-		settings->beginGroup("Controller");
+		settings->beginGroup("CONTROLLER");
 
 		settings->setValue("NAME", "");
 
@@ -30,7 +30,7 @@ butlogin(new QPushButton("Войти")), db(new QSqlDatabase()), query(nullptr),
 
 		settings->sync();
 
-		combp = new ComboPanel(1, settings, nullptr);
+		combp = new ComboPanel(0, settings, nullptr);
 
 		combp->show();
 	}
@@ -101,15 +101,22 @@ void LoginPanel::clickButLogin()
 
 	qDebug() << "Debug!3";
 
-	query->exec("select type from users where login='" + linelogin->text() + "' and password='" + linepassword->text() + "'");
+	//query->exec("select type from users where login='" + linelogin->text() + "' and password='" + linepassword->text() + "'");
+
+	query->prepare("select type from users where login = :Login and password = :Password");
+
+	query->bindValue(":Login", linelogin->text());
+	query->bindValue(":Password", linepassword->text());
+
+	query->exec();
 
 	if(query->next())
 	{
 		type = query->value(0).toString();
 		qDebug() << type;
 
-		if(type == "Admin"){ combp = new ComboPanel(1, settings, nullptr); }
-		else if(type == "Enginner"){ combp = new ComboPanel(2, settings, nullptr); }
+		if(type == "Admin"){ combp = new ComboPanel(1, settings, db); }
+		else if(type == "Enginner"){ combp = new ComboPanel(2, settings, db); }
 		else if(type == "Security"){ combp = new ComboPanel(3, settings, db); }
 
 		this->close();

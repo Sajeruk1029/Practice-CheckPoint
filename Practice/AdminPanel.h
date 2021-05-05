@@ -7,6 +7,7 @@
 #include <QBoxLayout>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QComboBox>
 
 #include <QMessageBox>
 
@@ -15,7 +16,7 @@
 
 #include <QSettings>
 
-//#include <QCryptographicHash>
+#include <QSerialPortInfo>
 
 class AdminPanel : public QWidget
 {
@@ -27,6 +28,7 @@ class AdminPanel : public QWidget
 
 	private slots:
 		void writeConf();
+		void portrefresh();
 
 	private:
 		QBoxLayout *layout;
@@ -34,11 +36,16 @@ class AdminPanel : public QWidget
 		QLineEdit *linehost;
 		QLineEdit *linelogin;
 		QLineEdit *linepassword;
-		QLineEdit *linecontrollername;
+		QLineEdit *lineaccess;
+
+		QComboBox *ports;
 
 		QPushButton *butwriteconf;
+		QPushButton *butportrefresh;
 
 		QSettings *settings;
+
+		QSqlDatabase *db;
 };
 
 #endif
